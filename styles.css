@@ -179,7 +179,7 @@ body {
     min-height: 100vh;
 }
 
-/* Skip Link for Accessibility */
+/* Skip Link */
 .skip-link {
     position: absolute;
     top: -100px;
@@ -299,7 +299,7 @@ body {
 }
 
 /* ============================================
-   VIDEO GRID - Responsive Thumbnail Grid
+   VIDEO GRID
    ============================================ */
 
 .video-grid {
@@ -327,7 +327,7 @@ body {
 }
 
 /* ============================================
-   VIDEO CARD - Thumbnail-First Design
+   VIDEO CARD
    ============================================ */
 
 .video-card {
@@ -466,7 +466,6 @@ body {
     position: relative;
     width: 100%;
     padding-bottom: 56.25%;
-    /* 16:9 aspect ratio */
     background-color: #000;
     border-radius: var(--radius-sm);
     overflow: hidden;
@@ -529,6 +528,71 @@ body {
     color: var(--md-sys-color-on-primary-container);
 }
 
+/* Hidden chips (initially collapsed) */
+.chip--hidden {
+    display: none;
+}
+
+/* Visible chips (expanded) */
+.chip--visible {
+    display: inline-flex;
+    animation: chipFadeIn var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+@keyframes chipFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Collapsing chips */
+.chip--collapsed {
+    animation: chipFadeOut var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+@keyframes chipFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* Expand/Collapse button chip */
+.chip--expand {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: background-color var(--motion-duration-short) var(--motion-easing-standard),
+        transform var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.chip--expand:hover {
+    background-color: var(--md-ref-palette-primary50);
+    transform: scale(1.05);
+}
+
+.chip--expand:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary-container);
+}
+
+.chip--expand:active {
+    transform: scale(0.98);
+}
+
 /* ============================================
    EMPTY STATE
    ============================================ */
@@ -586,7 +650,7 @@ body {
 }
 
 /* ============================================
-   FOCUS VISIBLE (Better keyboard navigation)
+   FOCUS VISIBLE
    ============================================ */
 
 :focus-visible {

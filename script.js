@@ -7,6 +7,12 @@
     'use strict';
 
     // ============================================
+    // CONFIGURATION
+    // ============================================
+
+    const MAX_VISIBLE_CHIPS = 4; // Number of chips to show before collapsing
+
+    // ============================================
     // DOM ELEMENTS
     // ============================================
 
@@ -44,6 +50,87 @@
             option.textContent = participant;
             participantFilter.appendChild(option);
         });
+    }
+
+    // ============================================
+    // CHIP GENERATION
+    // ============================================
+
+    // Generate chips for a card
+    function generateChips(card) {
+        const chipsContainer = card.querySelector('.video-card__chips');
+        const participants = card.dataset.participants.split(',').map(p => p.trim());
+        const totalCount = participants.length;
+
+        // Clear existing chips
+        chipsContainer.innerHTML = '';
+
+        // Create chips
+        participants.forEach((participant, index) => {
+            const chip = document.createElement('span');
+            chip.className = 'chip';
+            chip.textContent = participant;
+
+            // Hide chips beyond MAX_VISIBLE_CHIPS
+            if (index >= MAX_VISIBLE_CHIPS) {
+                chip.classList.add('chip--hidden');
+            }
+
+            chipsContainer.appendChild(chip);
+        });
+
+        // Add expand button if needed
+        if (totalCount > MAX_VISIBLE_CHIPS) {
+            const hiddenCount = totalCount - MAX_VISIBLE_CHIPS;
+
+            const expandBtn = document.createElement('button');
+            expandBtn.className = 'chip chip--expand';
+            expandBtn.type = 'button';
+            expandBtn.setAttribute('aria-expanded', 'false');
+            expandBtn.innerHTML = `+${hiddenCount} más`;
+            expandBtn.title = `Ver ${hiddenCount} participantes más`;
+
+            // Click handler to expand/collapse
+            expandBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent video from playing
+                toggleChips(card, expandBtn);
+            });
+
+            chipsContainer.appendChild(expandBtn);
+        }
+    }
+
+    // Toggle chip visibility
+    function toggleChips(card, expandBtn) {
+        const isExpanded = expandBtn.getAttribute('aria-expanded') === 'true';
+        const participants = card.dataset.participants.split(',').map(p => p.trim());
+        const hiddenCount = participants.length - MAX_VISIBLE_CHIPS;
+
+        // Get all chips that should be toggled (those after MAX_VISIBLE_CHIPS)
+        const allChips = card.querySelectorAll('.chip:not(.chip--expand)');
+        const toggleableChips = Array.from(allChips).slice(MAX_VISIBLE_CHIPS);
+
+        if (isExpanded) {
+            // Collapse - hide the extra chips
+            expandBtn.setAttribute('aria-expanded', 'false');
+            expandBtn.textContent = `+${hiddenCount} más`;
+            expandBtn.title = `Ver ${hiddenCount} participantes más`;
+
+            toggleableChips.forEach(chip => {
+                chip.classList.remove('chip--visible');
+                chip.classList.add('chip--hidden');
+            });
+        } else {
+            // Expand - show all chips
+            expandBtn.setAttribute('aria-expanded', 'true');
+            expandBtn.textContent = 'Ver menos';
+            expandBtn.title = 'Ocultar participantes';
+
+            toggleableChips.forEach(chip => {
+                chip.classList.remove('chip--hidden');
+                chip.classList.add('chip--visible');
+            });
+        }
     }
 
     // ============================================
@@ -139,7 +226,7 @@
 
         videoCards.forEach(card => {
             const participants = card.dataset.participants.split(',').map(p => p.trim());
-            const chips = card.querySelectorAll('.chip');
+            const chips = card.querySelectorAll('.chip:not(.chip--expand)');
 
             if (!selectedParticipant || participants.includes(selectedParticipant)) {
                 card.hidden = false;
@@ -226,6 +313,10 @@
     // ============================================
 
     function init() {
+        // Generate chips from data-participants
+        videoCards.forEach(card => generateChips(card));
+
+        // Populate filter dropdown
         populateFilterDropdown();
     }
 
