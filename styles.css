@@ -326,6 +326,24 @@ body {
     }
 }
 
+/* Section Separators */
+.section-title {
+    grid-column: 1 / -1;
+    font-size: var(--md-sys-typescale-headline-small-size);
+    font-weight: 700;
+    color: var(--md-sys-color-primary);
+    margin: var(--spacing-xl) 0 var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.section-title:first-child {
+    margin-top: 0;
+}
+
 /* ============================================
    VIDEO CARD
    ============================================ */
